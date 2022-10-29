@@ -1,0 +1,41 @@
+
+
+name: Release
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-deploy:
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 14
+
+    - run: npm install
+
+    - name: Generate changelog
+      id: changelog
+      uses: jaywcjlove/changelog-generator@main
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        filter-author: (jaywcjlove|小弟调调™|dependabot|renovate\\[bot\\]|dependabot\\[bot\\]|Renovate Bot)
+        filter: '[R|r]elease[d]\s+[v|V]\d(\.\d+){0,2}'
+
+    - name: Get the changelog
+      run: echo "${{ steps.changelog.outputs.changelog }}"
+
+    - name: Create Release
+      uses: ncipollo/release-action@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        body: |
+         
+          Comparing Changes: ${{ steps.changelog.outputs.compareurl }}  
+          ```shell
+          npm i webpAutoTransform@${{steps.create_tag.outputs.versionNumber}}
+          ```
+          ${{ steps.changelog.outputs.changelog }}
