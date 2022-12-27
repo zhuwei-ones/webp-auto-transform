@@ -301,3 +301,11 @@ export function getImgCustomCwebpConfig(currentPath, customList) {
   }
   return {};
 }
+
+export function nextTickWrapper(fn) {
+  return function wrapper(...args) {
+    return process.nextTick(()=>{
+      fn.call(this, ...args);
+    });
+  };
+}
