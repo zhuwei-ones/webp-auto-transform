@@ -4,6 +4,7 @@ import {
 import chokidar from 'chokidar';
 import WebpInit, { CreateWebpEventName, RemoveDirEventName, RemoveWebpEventName } from './webp';
 import ProgressBar from 'progress';
+import { saveTransformLog } from './log';
 
 function watchFile(options) {
   const { pluginOptions: { entryPath } } = options;
@@ -31,6 +32,7 @@ function watchFile(options) {
     })
     .on('error', (e) => {
       log(`监听发生了错误 ${e.message}`);
+      saveTransformLog(`监听发生了错误 ${e.message}`);
     });
 }
 

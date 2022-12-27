@@ -4,3 +4,5 @@ dist
 demo
 coverage
 example/images-webp
+.webp-transform.log
+.DS_Store

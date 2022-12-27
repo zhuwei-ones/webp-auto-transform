@@ -1,8 +1,11 @@
 import { debounce, humanFileSize, log } from './utils';
+import path from 'path';
+import { writeFile } from 'fs-extra';
+import { format } from 'util';
 
 let cache = {};
 
-const logDetail = debounce(()=>{
+const logDetail = debounce(() => {
   const currentImgList = cache;
 
   let totalSize = 0;
@@ -12,7 +15,7 @@ const logDetail = debounce(()=>{
   let biggerCounts = 0;
   const imgList = Object.keys(currentImgList);
 
-  imgList.forEach(imgPath=>{
+  imgList.forEach((imgPath) => {
     const item = currentImgList[imgPath];
     const { originSize, webpSize } = item;
 
@@ -43,11 +46,20 @@ const logDetail = debounce(()=>{
 }, 1000);
 
 // 输出转换之后的对比
-export const logTransformDiff = (imgInfo)=>{
+export const logTransformDiff = (imgInfo) => {
   // 跑测试用例不需要打印
   if (process.env.NODE_ENV === 'test') {
     return;
   }
   cache[imgInfo.originPath] = imgInfo;
   logDetail();
+};
+
+export const saveTransformLog = (...args) => {
+  var devLogFile = path.join(process.cwd(), '.webp-transform.log');
+  var devLogOptions = { flag: 'a+' };
+
+  const logInfo = format.apply(null, [...args, `， 时间：${new Date().toLocaleString()}`]) + '\n';
+
+  writeFile(devLogFile, logInfo, devLogOptions, ()=>{});
 };

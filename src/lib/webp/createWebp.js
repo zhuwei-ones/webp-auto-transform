@@ -1,18 +1,15 @@
-import chalk from 'chalk';
 import { execFileSync } from 'child_process';
 import cwebp from 'cwebp-bin';
 import { pathExistsSync, removeSync } from 'fs-extra';
 import { basename } from 'path';
-import { logTransformDiff } from '../log';
+import { logTransformDiff, saveTransformLog } from '../log';
 import {
   errLog,
   getCwebpOptions,
   getImgCustomCwebpConfig,
-  getLogPrefix,
   getSizeDifference,
   getWebpTransformPath,
-  humanFileSize,
-  log
+  humanFileSize
 } from '../utils';
 
 function logTransformDetail(imgPath, webpPath) {
@@ -34,8 +31,7 @@ function createWebp(imgPath, bar) {
     outputPath,
     biggerWebpDelete,
     webpExistReplace,
-    customList,
-    detailLog
+    customList
   } = pluginOptions;
 
   const webpPath = getWebpTransformPath(imgPath, { entryPath, outputPath });
@@ -52,6 +48,7 @@ function createWebp(imgPath, bar) {
     && !webpExistReplace
   ) {
     bar?.tick?.();
+    saveTransformLog(`[create webp failed] ${imgPath} exist webp, it will not transfrom to webp again`);
     logTransformDetail(imgPath, webpPath);
     return;
   }
@@ -60,11 +57,12 @@ function createWebp(imgPath, bar) {
     execFileSync(cwebp, [...currentCwebpOptions, imgPath, '-o', webpPath]);
   } catch (error) {
     errLog(`${imgPath} 转换 webp 失败, 检查配置是否出错->`, cwebpOptions);
+    saveTransformLog(`[create webp failed] ${imgPath} 转换 webp 失败, 检查配置是否出错-> ${JSON.stringify(cwebpOptions, null, 2)}`);
   } finally {
     bar?.tick?.();
   }
 
-  const { diffSize } = getSizeDifference(imgPath, webpPath);
+  const { diffSize, originSize, webpSize } = getSizeDifference(imgPath, webpPath);
   const webpName = basename(webpPath);
 
   logTransformDetail(imgPath, webpPath);
@@ -73,15 +71,9 @@ function createWebp(imgPath, bar) {
   if (diffSize > 0 && biggerWebpDelete) {
     removeSync(webpPath);
 
-    if (detailLog) {
-      console.log(
-        chalk.red(getLogPrefix('delete webp')),
-        webpName,
-        `转换体积大了 ${ humanFileSize(diffSize) }`
-      );
-    }
-  } else if (detailLog) {
-    log(`${webpName} created`);
+    saveTransformLog(`[create webp but delete] ${webpName}， 前：${humanFileSize(originSize)}， 后：${humanFileSize(webpSize)}`);
+  } else {
+    saveTransformLog(`[create webp successful] ${webpName}，  缩小了 ${ humanFileSize(Math.abs(diffSize)) }，  前：${humanFileSize(originSize)}，  后：${humanFileSize(webpSize)}`);
   }
 }
 

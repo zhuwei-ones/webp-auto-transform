@@ -1,5 +1,6 @@
 import { removeSync } from 'fs-extra';
-import { getWebpTransformPath, log } from '../utils';
+import { saveTransformLog } from '../log';
+import { getWebpTransformPath } from '../utils';
 
 function removeWebp(imgPath) {
   const { pluginOptions: { entryPath, outputPath, detailLog } } = this.options;
@@ -9,7 +10,7 @@ function removeWebp(imgPath) {
   removeSync(webpPath);
 
   if (detailLog) {
-    log(`${webpPath} remove`);
+    saveTransformLog(`[delete webp] ${webpPath} `);
   }
 }
 
