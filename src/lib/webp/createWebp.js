@@ -22,7 +22,7 @@ function logTransformDetail(imgPath, webpPath) {
   });
 }
 
-function createWebp(imgPath, bar) {
+function createWebp({ path: imgPath, bar, forceCreate }) {
   const { cwebpOptions, pluginOptions } = this.options;
 
   const {
@@ -41,15 +41,18 @@ function createWebp(imgPath, bar) {
     ...customCwebpConfig
   });
 
-  // 已经存在webp，但是设置不替换
-  if (
-    pathExistsSync(webpPath)
-    && !webpExistReplace
-  ) {
-    bar?.tick?.();
-    saveTransformLog(`[create webp failed] ${imgPath} exist webp, it will not transfrom to webp again`);
-    logTransformDetail(imgPath, webpPath);
-    return;
+  // 如果强制重建，就不需要检测是否存在
+  if (!forceCreate) {
+    // 已经存在webp，但是设置不替换
+    if (
+      pathExistsSync(webpPath)
+      && !webpExistReplace
+    ) {
+      bar?.tick?.();
+      saveTransformLog(`[create webp failed] ${imgPath} exist webp, it will not transfrom to webp again`);
+      logTransformDetail(imgPath, webpPath);
+      return;
+    }
   }
 
   try {

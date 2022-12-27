@@ -19,16 +19,24 @@ function watchFile(options) {
       if (!isValidImg(path)) {
         return;
       }
-      event.emit(CreateWebpEventName, path, bar);
+      event.emit(CreateWebpEventName, { path, bar });
+    })
+
+    // 图片直接被替换（不是删除再添加）
+    .on('change', (path)=>{
+      if (!isValidImg(path)) {
+        return;
+      }
+      event.emit(CreateWebpEventName, { path, bar, forceCreate: true });
     })
     .on('unlink', (path) => {
       if (!isValidImg(path)) {
         return;
       }
-      event.emit(RemoveWebpEventName, path);
+      event.emit(RemoveWebpEventName, { path });
     })
     .on('unlinkDir', (path) => {
-      event.emit(RemoveDirEventName, path);
+      event.emit(RemoveDirEventName, { path });
     })
     .on('error', (e) => {
       log(`监听发生了错误 ${e.message}`);

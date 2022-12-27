@@ -2,7 +2,7 @@ import { pathExistsSync, removeSync } from 'fs-extra';
 import { saveTransformLog } from '../log';
 import { getOutputPathByEntry } from '../utils';
 
-function removeDir(dirPath) {
+function removeDir({ path: dirPath }) {
   const { pluginOptions: { entryPath, outputPath, detailLog } } = this.options;
 
   const webpDirPath = getOutputPathByEntry(dirPath, { entryPath, outputPath });
