@@ -1,9 +1,18 @@
 import { debounce, humanFileSize, log } from './utils';
 import path from 'path';
-import { writeFile } from 'fs-extra';
+import { writeFileSync } from 'fs-extra';
 import { format } from 'util';
 
 let cache = {};
+
+export const saveTransformLog = (...args) => {
+  var devLogFile = path.join(process.cwd(), '.webp-transform.log');
+  var devLogOptions = { flag: 'a+' };
+
+  const logInfo = format.apply(null, [...args, `， 时间：${new Date().toLocaleString()}`]) + '\n';
+
+  writeFileSync(devLogFile, logInfo, devLogOptions, ()=>{});
+};
 
 const logDetail = debounce(() => {
   const currentImgList = cache;
@@ -39,10 +48,10 @@ const logDetail = debounce(() => {
     未压缩图片包大小: humanFileSize(remainSize),
     总共减少体积: humanFileSize(diffSize),
     总共压缩图片数: imgList.length,
-    压缩率: `${Number(rate) * 100}%`
+    压缩率: `${(Number(rate) * 100).toFixed(2)}%`
   });
 
-  log(`本次共有 ${biggerCounts} 张图片转成 webp 后会更大`);
+  log(`本次共有 ${biggerCounts} 张图片转成 webp 后会更大，转换详情请查看根目录日志文件 [.webp-transform.log]`);
 }, 1000);
 
 // 输出转换之后的对比
@@ -53,13 +62,4 @@ export const logTransformDiff = (imgInfo) => {
   }
   cache[imgInfo.originPath] = imgInfo;
   logDetail();
-};
-
-export const saveTransformLog = (...args) => {
-  var devLogFile = path.join(process.cwd(), '.webp-transform.log');
-  var devLogOptions = { flag: 'a+' };
-
-  const logInfo = format.apply(null, [...args, `， 时间：${new Date().toLocaleString()}`]) + '\n';
-
-  writeFile(devLogFile, logInfo, devLogOptions, ()=>{});
 };

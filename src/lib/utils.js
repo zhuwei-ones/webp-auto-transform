@@ -80,9 +80,9 @@ export function getSizeDifference(imgPath, webpPath) {
   const diff = (rSize - oSize);
 
   return {
-    originSize: oSize.toFixed(2),
-    webpSize: rSize.toFixed(2),
-    diffSize: diff.toFixed(2)
+    originSize: Number(oSize.toFixed(2)),
+    webpSize: Number(rSize.toFixed(2)),
+    diffSize: Number(diff.toFixed(2))
   };
 }
 

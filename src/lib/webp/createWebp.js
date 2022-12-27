@@ -1,7 +1,6 @@
 import { execFileSync } from 'child_process';
 import cwebp from 'cwebp-bin';
 import { pathExistsSync, removeSync } from 'fs-extra';
-import { basename } from 'path';
 import { logTransformDiff, saveTransformLog } from '../log';
 import {
   errLog,
@@ -63,7 +62,6 @@ function createWebp(imgPath, bar) {
   }
 
   const { diffSize, originSize, webpSize } = getSizeDifference(imgPath, webpPath);
-  const webpName = basename(webpPath);
 
   logTransformDetail(imgPath, webpPath);
 
@@ -71,9 +69,9 @@ function createWebp(imgPath, bar) {
   if (diffSize > 0 && biggerWebpDelete) {
     removeSync(webpPath);
 
-    saveTransformLog(`[create webp but delete] ${webpName}， 前：${humanFileSize(originSize)}， 后：${humanFileSize(webpSize)}`);
+    saveTransformLog(`[delete bigger webp ] ${imgPath}， 原：${humanFileSize(originSize)}， webp：${humanFileSize(webpSize)}`);
   } else {
-    saveTransformLog(`[create webp successful] ${webpName}，  缩小了 ${ humanFileSize(Math.abs(diffSize)) }，  前：${humanFileSize(originSize)}，  后：${humanFileSize(webpSize)}`);
+    saveTransformLog(`[create webp successful] ${imgPath}，  缩小了 ${ humanFileSize(Math.abs(diffSize)) }，  原：${humanFileSize(originSize)}，  webp：${humanFileSize(webpSize)}`);
   }
 }
 
