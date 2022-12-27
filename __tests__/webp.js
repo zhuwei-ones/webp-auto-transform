@@ -43,7 +43,7 @@ describe('Test Webp', function () {
   test('Test Create Webp ', async () => {
     fs.removeSync(webp);
 
-    createWebp.call(context, img);
+    createWebp.call(context, {path:img});
 
     expect(fs.existsSync(webp)).toBe(true);
   });
@@ -51,11 +51,11 @@ describe('Test Webp', function () {
   test('Test Remove Webp ', async () => {
     fs.removeSync(webp);
 
-    createWebp.call(context, img);
+    createWebp.call(context, {path:img});
 
     expect(fs.existsSync(webp)).toBe(true);
 
-    removeWebp.call(context, img);
+    removeWebp.call(context, {path:img});
 
     expect(fs.existsSync(webp)).toBe(false);
   });
@@ -63,11 +63,11 @@ describe('Test Webp', function () {
   test('Test Keep Webp ', async () => {
     fs.removeSync(webp);
 
-    createWebp.call(context, img);
+    createWebp.call(context, {path:img});
 
     expect(fs.existsSync(webp)).toBe(true);
 
-    expect(createWebp.call(context, img)).toBe(undefined);
+    expect(createWebp.call(context, {path:img})).toBe(undefined);
   });
 
   test('Test Remove Bigger Webp', async () => {
@@ -83,7 +83,7 @@ describe('Test Webp', function () {
           biggerWebpDelete: true
         }
       }
-    }, imgBig);
+    }, {path:imgBig});
 
     await new Promise((res)=>setTimeout(()=>{ res(); }, 500));
 
@@ -94,11 +94,11 @@ describe('Test Webp', function () {
 test('Test Add cwebp params', () => {
   fs.removeSync(webp);
 
-  createWebp.call(contextWithCwebParams, img);
+  createWebp.call(contextWithCwebParams, {path:img});
 
   expect(fs.existsSync(webp)).toBe(true);
 
-  removeWebp.call(contextWithCwebParams, img);
+  removeWebp.call(contextWithCwebParams, {path:img});
 
   expect(fs.existsSync(webp)).toBe(false);
 });
