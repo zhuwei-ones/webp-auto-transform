@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+
+const webpTransformMain = require('../dist/cli.js');
+
+const yargs = require('yargs');
+const fs = require('fs-extra');
+const path = require('path');
+
+const options = yargs
+  .usage('Usage: -c <file path>')
+  .option('c', { alias: 'config', describe: '配置文件路径', type: 'string' })
+  .option('e', { alias: 'entry', describe: '监听文件目录', type: 'string' })
+  .argv;
+
+if (options.config) {
+  try {
+    const currentPath = path.resolve(process.cwd(), options.config);
+    const content = fs.readFileSync(currentPath);
+    const configData = JSON.parse(content.toString());
+
+    console.log(`[webp-transform] 当前转换目录--> ${configData.entryPath}`);
+    webpTransformMain.default(configData);
+  } catch (error) {
+    console.log('[webp-transform error]', error);
+  }
+}
+
+if (!options.config && options.entry) {
+  console.log(`[webp-transform] 当前转换目录--> ${options.entry}`);
+  webpTransformMain.default({ entryPath: options.entry });
+}

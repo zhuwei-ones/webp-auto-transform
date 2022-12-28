@@ -58,8 +58,9 @@ function createWebp({ path: imgPath, bar, forceCreate }) {
   try {
     execFileSync(cwebp, [...currentCwebpOptions, imgPath, '-o', webpPath]);
   } catch (error) {
-    errLog(`${imgPath} 转换 webp 失败, 检查配置是否出错->`, cwebpOptions);
-    saveTransformLog(`[create webp failed] ${imgPath} 转换 webp 失败, 检查配置是否出错-> ${JSON.stringify(cwebpOptions, null, 2)}`);
+    const msg = `[create webp failed] ${imgPath} 转换 webp 失败，错误详情--->${error.message}, 检查配置是否出错---> ${JSON.stringify(cwebpOptions, null, 2)}`;
+    errLog(msg);
+    saveTransformLog(msg);
   } finally {
     bar?.tick?.();
   }
