@@ -11,7 +11,8 @@ import {
   logTransformDetail, saveTransformLog,
   isWebpCacheExist,
   addBiggerWebpCache,
-  removeBiggerWebpCache
+  removeBiggerWebpCache,
+  writeTransformInfoToFile
 } from '../../utils';
 
 function createWebp({ path: imgPath, bar, forceCreate }) {
@@ -67,8 +68,6 @@ function createWebp({ path: imgPath, bar, forceCreate }) {
 
   const { diffSize, originSize, webpSize } = getSizeDifference(imgPath, webpPath);
 
-  logTransformDetail(imgPath, webpPath);
-
   // 如果原图更小，那么直接使用原图
   if (diffSize > 0 && biggerWebpDelete) {
     removeSync(webpPath);
@@ -78,6 +77,9 @@ function createWebp({ path: imgPath, bar, forceCreate }) {
     removeBiggerWebpCache(imgPath);
     saveTransformLog(`[create webp successful] ${imgPath}， 缩小了 ${ getHumanFileSize(Math.abs(diffSize)) }，  原：${getHumanFileSize(originSize)}，  webp：${getHumanFileSize(webpSize)}`);
   }
+
+  logTransformDetail(imgPath, webpPath);
+  writeTransformInfoToFile();
 }
 
 export default createWebp;

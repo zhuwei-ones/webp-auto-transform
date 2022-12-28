@@ -2,8 +2,9 @@ import {
   ensureFileSync, pathExistsSync, readFileSync, writeJSONSync
 } from 'fs-extra';
 import { remove } from 'lodash';
+import { debounce } from './common';
 import { getAbsolutePath } from './getValue';
-import { getLogPrefix } from './log';
+import { errLog, log } from './log';
 
 const cacheFileName = '.webp-transform.cache';
 const filePath = getAbsolutePath(cacheFileName);
@@ -29,17 +30,17 @@ function readTransformFromFile() {
 
     return [];
   } catch (error) {
-    console.error(`${getLogPrefix(error)} 缓存写入出错`);
+    errLog('缓存写入出错');
     return [];
   }
 }
 
-export function writeTransformInfoToFile() {
+export const writeTransformInfoToFile = debounce(()=>{
   ensureFileSync(filePath);
   writeJSONSync(filePath, WebpCache.BiggerDeleteList, { spaces: 4 });
 
-  console.error(`${getLogPrefix('successful')} 已经把转换后更大的图片缓存了，这些图片不会再下次转换中执行`);
-}
+  log('已经把转换后更大的图片缓存了，这些图片不会再下次转换中执行');
+}, 1000);
 
 export function addBiggerWebpCache(path) {
   if (!WebpCache.BiggerDeleteList.includes(path)) {

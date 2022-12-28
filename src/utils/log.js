@@ -2,7 +2,7 @@ import path from 'path';
 import { writeFileSync } from 'fs-extra';
 import chalk from 'chalk';
 import { format } from 'util';
-import { getBiggerWebpCacheList, writeTransformInfoToFile } from './cache';
+import { getBiggerWebpCacheList } from './cache';
 import { debounce, isTestEnv } from './common';
 import {
   getSizeDifference, getHumanFileSize
@@ -75,8 +75,6 @@ const logDetail = debounce(() => {
     总共压缩图片数: imgList.length,
     压缩率: `${(Number(rate) * 100).toFixed(2)}%`
   });
-
-  writeTransformInfoToFile();
 
   const biggerList = getBiggerWebpCacheList();
 
