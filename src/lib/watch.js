@@ -1,10 +1,9 @@
 import {
-  getWatchDirAllFiles, isValidImg, log
-} from './utils';
+  getWatchDirAllFiles, isValidImg, log, saveTransformLog
+} from '../utils';
 import chokidar from 'chokidar';
 import WebpInit, { CreateWebpEventName, RemoveDirEventName, RemoveWebpEventName } from './webp';
 import ProgressBar from 'progress';
-import { saveTransformLog } from './log';
 
 function watchFile(options) {
   const { pluginOptions: { entryPath } } = options;

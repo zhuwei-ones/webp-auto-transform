@@ -1,5 +1,5 @@
-import { getCurrentOptions } from './lib/utils';
 import watchFile from './lib/watch';
+import { getCurrentOptions } from './utils';
 
 function WebpAutoTransform(options) {
   const currentOptions = getCurrentOptions(options);

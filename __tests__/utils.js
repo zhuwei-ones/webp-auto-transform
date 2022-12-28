@@ -6,7 +6,7 @@ const {
   getWebpTransformPath,
   getCwebpOptions,
   getAbsolutePath,
-} = require("../src/lib/utils");
+} = require("../src/utils");
 
 const path = require("path");
 

@@ -2,7 +2,7 @@ import EventEmitter from 'eventemitter3';
 import createWebp from './createWebp';
 import removeWebp from './removeWebp';
 import removeDir from './removeDir';
-import { nextTickWrapper } from '../utils';
+import { nextTickWrapper } from '../../utils';
 
 export const CreateWebpEventName = 'create-webp';
 export const RemoveWebpEventName = 'remove-webp';

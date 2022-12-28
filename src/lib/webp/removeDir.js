@@ -1,6 +1,5 @@
 import { pathExistsSync, removeSync } from 'fs-extra';
-import { saveTransformLog } from '../log';
-import { getOutputPathByEntry } from '../utils';
+import { getOutputPathByEntry, saveTransformLog } from '../../utils';
 
 function removeDir({ path: dirPath }) {
   const { pluginOptions: { entryPath, outputPath, detailLog } } = this.options;
