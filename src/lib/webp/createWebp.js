@@ -1,15 +1,18 @@
 import { execFileSync } from 'child_process';
 import cwebp from 'cwebp-bin';
 import { pathExistsSync, removeSync } from 'fs-extra';
-import { logTransformDetail, saveTransformLog } from '../log';
 import {
   errLog,
   getCwebpOptions,
   getImgCustomCwebpConfig,
   getSizeDifference,
   getWebpTransformPath,
-  getHumanFileSize
-} from '../utils';
+  getHumanFileSize,
+  logTransformDetail, saveTransformLog,
+  isWebpCacheExist,
+  addBiggerWebpCache,
+  removeBiggerWebpCache
+} from '../../utils';
 
 function createWebp({ path: imgPath, bar, forceCreate }) {
   const { cwebpOptions, pluginOptions } = this.options;
@@ -19,7 +22,8 @@ function createWebp({ path: imgPath, bar, forceCreate }) {
     outputPath,
     biggerWebpDelete,
     webpExistReplace,
-    customList
+    customList,
+    cache
   } = pluginOptions;
 
   const webpPath = getWebpTransformPath(imgPath, { entryPath, outputPath });
@@ -32,14 +36,21 @@ function createWebp({ path: imgPath, bar, forceCreate }) {
 
   // 如果强制重建，就不需要检测是否存在
   if (!forceCreate) {
+    bar?.tick?.();
+    logTransformDetail(imgPath, webpPath);
+
+    // 缓存了转换后更大的图片，不再对这些图片做二次转换，提升速度
+    if (cache && biggerWebpDelete && isWebpCacheExist(imgPath)) {
+      saveTransformLog(`[skip transform] ${imgPath} was transformed to webp, and it was bigger, so it will not transform again, you can check the cachelog [.webp-transform.log]`);
+      return;
+    }
+
     // 已经存在webp，但是设置不替换
     if (
       pathExistsSync(webpPath)
       && !webpExistReplace
     ) {
-      bar?.tick?.();
-      saveTransformLog(`[create webp failed] ${imgPath} exist webp, it will not transfrom to webp again`);
-      logTransformDetail(imgPath, webpPath);
+      saveTransformLog(`[exist webp] ${imgPath} exist webp, it will not transfrom to webp again`);
       return;
     }
   }
@@ -61,8 +72,10 @@ function createWebp({ path: imgPath, bar, forceCreate }) {
   // 如果原图更小，那么直接使用原图
   if (diffSize > 0 && biggerWebpDelete) {
     removeSync(webpPath);
-    saveTransformLog(`[delete bigger webp ] ${imgPath}， 原：${getHumanFileSize(originSize)}， webp：${getHumanFileSize(webpSize)}`);
+    addBiggerWebpCache(imgPath);
+    saveTransformLog(`[delete bigger webp] ${imgPath}， 原：${getHumanFileSize(originSize)}， webp：${getHumanFileSize(webpSize)}`);
   } else {
+    removeBiggerWebpCache(imgPath);
     saveTransformLog(`[create webp successful] ${imgPath}， 缩小了 ${ getHumanFileSize(Math.abs(diffSize)) }，  原：${getHumanFileSize(originSize)}，  webp：${getHumanFileSize(webpSize)}`);
   }
 }

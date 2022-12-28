@@ -1,14 +1,16 @@
-import {
-  debounce, getSizeDifference, getHumanFileSize, isTestEnv
-} from '../lib/utils';
 import path from 'path';
 import { writeFileSync } from 'fs-extra';
 import chalk from 'chalk';
 import { format } from 'util';
+import { getBiggerWebpCacheList, writeTransformInfoToFile } from './cache';
+import { debounce, isTestEnv } from './common';
+import {
+  getSizeDifference, getHumanFileSize
+} from './getValue';
 
 let cache = {};
 
-export function getLogPrefix(name) {
+export function getLogPrefix(name = '') {
   return `[webp-auto-transform ${name}]: `;
 }
 
@@ -73,6 +75,14 @@ const logDetail = debounce(() => {
     总共压缩图片数: imgList.length,
     压缩率: `${(Number(rate) * 100).toFixed(2)}%`
   });
+
+  writeTransformInfoToFile();
+
+  const biggerList = getBiggerWebpCacheList();
+
+  if (biggerList.length) {
+    log(`根据缓存，为了提升转换速度，本次跳过了 ${biggerList.length} 张图片的转换，跳过的图片可以看 [.webp-transform.cache] `);
+  }
 
   log(`本次共有 ${biggerCounts} 张图片转成 webp 后会更大，转换详情请查看根目录日志文件 [.webp-transform.log]`);
 }, 1000);

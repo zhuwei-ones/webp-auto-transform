@@ -3,10 +3,12 @@
 ## WebpAutoTransform
 [![Coverage Status](https://zhuwei-ones.github.io/webp-auto-transform/badges.svg)](https://zhuwei-ones.github.io/webp-auto-transform/lcov-report/)
 
-Features
+## Features
 
-1、支持批量把图片转换成webp，转换之后更大支持删除   
-2、监听图片的新增/删除/修改/移动，从而动态转换webp  
+1. 支持批量把图片转换成webp，转换之后更大支持删除   
+2. 监听图片的新增/删除/修改/移动，从而动态转换webp  
+3. 支持cli，使用终端命令进行一次性批量转换
+4. 支持日志查看转换的详情信息
 
 
 ## Install
@@ -37,7 +39,8 @@ webpAutoTransform({
     ],
     biggerWebpDelete: true， // 转换后更大的webp 图片处理方式， 删除 还是保留，默认删除
     webpExistReplace: true  // 如果webp文件已经存在，是否替换
-    detailLog:false // 是否输出转换信息
+    detailLog:false // 是否输出转换信息到控制台中，当前已经会把转换日志输出到 .webp-transform.log 文件中
+    cache:false // 是否缓存转换信息，开启之后，之前转换更大的webp 被删除之后会被记录下来，重新执行的时候不会再转换该图片
 
     // ...其他 cwebp 支持的参数，参考https://developers.google.com/speed/webp/docs/cwebp
     lossless:true,
@@ -60,6 +63,7 @@ webpAutoTransform({
     ```
 - `biggerWebpDelete`,转换后更大的webp 图片处理方式， 删除 还是保留，默认删除，默认 ture，false 则会保留图片
 - `webpExistReplace`,如果webp文件已经存在，是否替换,默认 false
+- `cache`,开启之后，之前转换更大的webp 被删除之后会被记录下来，重新执行的时候会被过滤，不会再转换该图片
 - `....more` ，cwebp 支持的参数，参考 https://developers.google.com/speed/webp/docs/cwebp
 
 
