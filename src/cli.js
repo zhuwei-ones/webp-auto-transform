@@ -1,7 +1,7 @@
 // import createWebp from './webp/createWebp';
 
 import ProgressBar from 'progress';
-import { getCurrentOptions, getWatchDirAllFiles, isValidImg } from './lib/utils';
+import { getCurrentOptions, getWatchDirAllFiles, isValidImg } from './utils';
 import WebpInit, { CreateWebpEventName } from './lib/webp';
 
 function getAllImgs(entryPath) {
@@ -12,14 +12,18 @@ function getAllImgs(entryPath) {
 
 function transformWebpBatch(options) {
   const currentOptions = getCurrentOptions(options);
-  const { pluginOptions: { entryPath } } = currentOptions;
+  const {
+    pluginOptions: { entryPath }
+  } = currentOptions;
 
   const event = WebpInit(currentOptions);
   const imgList = getAllImgs(entryPath);
 
-  const bar = new ProgressBar(':bar :current/:total', { total: imgList.length });
+  const bar = new ProgressBar(':bar :current/:total', {
+    total: imgList.length
+  });
 
-  imgList.forEach(img=>{
+  imgList.forEach((img) => {
     if (!isValidImg(img)) {
       return;
     }

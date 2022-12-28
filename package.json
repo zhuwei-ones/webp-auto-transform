@@ -63,6 +63,7 @@
     "lint-staged": "^13.0.3",
     "regenerator-runtime": "^0.13.10",
     "rimraf": "^3.0.2",
+    "shelljs": "^0.8.5",
     "standard-version": "^9.5.0"
   },
   "dependencies": {
