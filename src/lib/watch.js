@@ -1,5 +1,6 @@
 import {
-  getWatchDirAllFiles, isValidImg, log, saveTransformLog
+  errLog,
+  getWatchDirAllFiles, isValidImg, saveTransformLog
 } from '../utils';
 import chokidar from 'chokidar';
 import WebpInit, { CreateWebpEventName, RemoveDirEventName, RemoveWebpEventName } from './webp';
@@ -38,7 +39,7 @@ function watchFile(options) {
       event.emit(RemoveDirEventName, { path });
     })
     .on('error', (e) => {
-      log(`监听发生了错误 ${e.message}`);
+      errLog(`监听发生了错误 ${e.message}`);
       saveTransformLog(`监听发生了错误 ${e.message}`);
     });
 }
