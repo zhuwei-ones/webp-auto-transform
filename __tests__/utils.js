@@ -9,9 +9,11 @@ const {
 } = require("../src/utils");
 
 const path = require("path");
+const { removeSync, ensureDirSync } = require("fs-extra");
 
 const entryPath = "./example/images";
-const outputPath = "./example/images-webp-test";
+const outputPath = "./example/images-webp-util-test";
+const outputDefaultPath = "./example/images-webp";
 const childPath = "./a";
 const demoPng = `${entryPath}/xxxx.png"`;
 const demoWebp = `${outputPath}/xxxx.webp`;
@@ -36,13 +38,14 @@ const defaultOptions = {
   quality: 75,
   webpExistReplace: false,
   quiet: true,
-  detailLog:false
+  detailLog:false,
+  cache:false,
 };
 
 const resultOptions = {
   ...defaultOptions,
   entryPath: entryAbPath,
-  outputPath:getAbsolutePath("./example/images-webp")
+  outputPath:getAbsolutePath(outputDefaultPath)
 };
 
 const errorList = {
@@ -58,6 +61,14 @@ const errorList = {
   biggerWebpDelete: new Error("biggerWebpDelete 只能是布尔值"),
   webpExistReplace: new Error("webpExistReplace 只能是布尔值"),
 };
+
+beforeAll(()=>{
+  ensureDirSync(outputAbPath)
+})
+
+afterAll(()=>{
+  removeSync(outputAbPath)
+})
 
 test("Test isDir", () => {
   expect(isDir()).toBe(false);

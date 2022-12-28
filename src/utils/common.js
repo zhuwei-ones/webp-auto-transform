@@ -35,3 +35,11 @@ export function nextTickWrapper(fn) {
     });
   };
 }
+
+export function sleep(time = 200) {
+  return new Promise((res)=>{
+    setTimeout(()=>{
+      res('');
+    }, time);
+  });
+}
