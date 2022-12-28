@@ -4,7 +4,7 @@ const webpTransformMain = require('../dist/cli.js');
 
 const yargs = require('yargs');
 const fs = require('fs-extra');
-const path = require('path');
+const { getAbsolutePath } = require('../dist/utils');
 
 const options = yargs
   .usage('Usage: -c <file path>')
@@ -14,7 +14,7 @@ const options = yargs
 
 if (options.config) {
   try {
-    const currentPath = path.resolve(process.cwd(), options.config);
+    const currentPath = getAbsolutePath(options.config);
     const content = fs.readFileSync(currentPath);
     const configData = JSON.parse(content.toString());
 

@@ -1,26 +1,15 @@
 import { execFileSync } from 'child_process';
 import cwebp from 'cwebp-bin';
 import { pathExistsSync, removeSync } from 'fs-extra';
-import { logTransformDiff, saveTransformLog } from '../log';
+import { logTransformDetail, saveTransformLog } from '../log';
 import {
   errLog,
   getCwebpOptions,
   getImgCustomCwebpConfig,
   getSizeDifference,
   getWebpTransformPath,
-  humanFileSize
+  getHumanFileSize
 } from '../utils';
-
-function logTransformDetail(imgPath, webpPath) {
-  const { originSize, webpSize } = getSizeDifference(imgPath, webpPath);
-
-  logTransformDiff({
-    originSize,
-    originPath: imgPath,
-    webpSize,
-    webpPath
-  });
-}
 
 function createWebp({ path: imgPath, bar, forceCreate }) {
   const { cwebpOptions, pluginOptions } = this.options;
@@ -72,10 +61,9 @@ function createWebp({ path: imgPath, bar, forceCreate }) {
   // 如果原图更小，那么直接使用原图
   if (diffSize > 0 && biggerWebpDelete) {
     removeSync(webpPath);
-
-    saveTransformLog(`[delete bigger webp ] ${imgPath}， 原：${humanFileSize(originSize)}， webp：${humanFileSize(webpSize)}`);
+    saveTransformLog(`[delete bigger webp ] ${imgPath}， 原：${getHumanFileSize(originSize)}， webp：${getHumanFileSize(webpSize)}`);
   } else {
-    saveTransformLog(`[create webp successful] ${imgPath}，  缩小了 ${ humanFileSize(Math.abs(diffSize)) }，  原：${humanFileSize(originSize)}，  webp：${humanFileSize(webpSize)}`);
+    saveTransformLog(`[create webp successful] ${imgPath}， 缩小了 ${ getHumanFileSize(Math.abs(diffSize)) }，  原：${getHumanFileSize(originSize)}，  webp：${getHumanFileSize(webpSize)}`);
   }
 }
 

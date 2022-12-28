@@ -1,9 +1,32 @@
-import { debounce, humanFileSize, log } from './utils';
+import {
+  debounce, getSizeDifference, getHumanFileSize, isTestEnv
+} from '../lib/utils';
 import path from 'path';
 import { writeFileSync } from 'fs-extra';
+import chalk from 'chalk';
 import { format } from 'util';
 
 let cache = {};
+
+export function getLogPrefix(name) {
+  return `[webp-auto-transform ${name}]: `;
+}
+
+export function log(...args) {
+  // 跑测试用例不需要打印
+  if (isTestEnv()) {
+    return;
+  }
+  console.log(chalk.blue(getLogPrefix('log')), ...args);
+}
+
+export function errLog(...args) {
+  // 跑测试用例不需要打印
+  if (isTestEnv()) {
+    return;
+  }
+  console.log(chalk.blue(getLogPrefix('error')), ...args);
+}
 
 export const saveTransformLog = (...args) => {
   var devLogFile = path.join(process.cwd(), '.webp-transform.log');
@@ -43,10 +66,10 @@ const logDetail = debounce(() => {
   const rate = (diffSize / totalSize).toFixed(2);
 
   console.table({
-    原图片包大小: humanFileSize(totalSize),
-    webp图片包大小: humanFileSize(totalWebpSize),
-    未压缩图片包大小: humanFileSize(remainSize),
-    总共减少体积: humanFileSize(diffSize),
+    原图片包大小: getHumanFileSize(totalSize),
+    webp图片包大小: getHumanFileSize(totalWebpSize),
+    未压缩图片包大小: getHumanFileSize(remainSize),
+    总共减少体积: getHumanFileSize(diffSize),
     总共压缩图片数: imgList.length,
     压缩率: `${(Number(rate) * 100).toFixed(2)}%`
   });
@@ -57,9 +80,20 @@ const logDetail = debounce(() => {
 // 输出转换之后的对比
 export const logTransformDiff = (imgInfo) => {
   // 跑测试用例不需要打印
-  if (process.env.NODE_ENV === 'test') {
+  if (isTestEnv()) {
     return;
   }
   cache[imgInfo.originPath] = imgInfo;
   logDetail();
 };
+
+export function logTransformDetail(imgPath, webpPath) {
+  const { originSize, webpSize } = getSizeDifference(imgPath, webpPath);
+
+  logTransformDiff({
+    originSize,
+    originPath: imgPath,
+    webpSize,
+    webpPath
+  });
+}
