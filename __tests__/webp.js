@@ -2,10 +2,10 @@ import createWebp from '../src/lib/webp/createWebp';
 import fs, { emptyDirSync, removeSync } from 'fs-extra';
 import removeWebp from '../src/lib/webp/removeWebp';
 import path from 'path';
-import { getAbsolutePath } from '../src/lib/utils';
+import { getAbsolutePath } from '../src/utils';
 
 const entryPath = './example/images';
-const outputPath = './example/images-webp-test';
+const outputPath = './example/images-webp-test-webp';
 
 const currentCwd = process.cwd();
 
@@ -18,7 +18,15 @@ const imgBig = path.resolve(entryAbPath, 'big.png');
 const webp = path.resolve(outputAbPath, 'test.webp');
 const webpBig = path.resolve(outputAbPath, 'big.webp');
 
-fs.ensureDirSync(outputAbPath);
+
+beforeEach(() => {
+  fs.removeSync(outputAbPath);
+  fs.ensureDirSync(outputAbPath);
+});
+
+afterEach(() => {
+  fs.removeSync(outputAbPath);
+});
 
 const context = {
   options: {

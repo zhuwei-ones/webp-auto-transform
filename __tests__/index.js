@@ -2,11 +2,14 @@ import {   copyFileSync,  emptyDirSync,   ensureDirSync, moveSync, pathExistsSyn
 
 import {resolve} from 'path'
 import WebpAutoTransform from "../src";
+import { sleep } from "../src/utils";
+
+
 
 const entryImagePath = resolve(__dirname,"../example/images")
 
 const testImagePath = resolve(__dirname,"./images")
-const testImageWebpPath = resolve(__dirname,"./images-webp")
+const testImageWebpPath = resolve(__dirname,"./images-webp-all")
 
 // 测试创建目录
 const forTestDir= `${testImagePath}/for_test`
@@ -49,10 +52,10 @@ const TestDirImg = {
     optimizeWebp:`${forTestWebpDir}/${Imgs.optimizeWebp}`,
 }
 
-
 ensureDirSync(testImagePath)
 const watcher = WebpAutoTransform({
-    entryPath:"./__tests__/images"
+    entryPath:"./__tests__/images",
+    outputPath:"./__tests__/images-webp-all"
 })
 
 beforeEach(()=>{
@@ -65,10 +68,6 @@ afterAll(()=>{
     removeSync(testImagePath)
     removeSync(testImageWebpPath)
 })
-
-function sleep(time = 200){
-    return new Promise((res)=>setTimeout(()=>res(), time));
-}
 
 
 describe("Test Create Webp",()=>{
