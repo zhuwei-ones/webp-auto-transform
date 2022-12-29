@@ -5,4 +5,5 @@ demo
 coverage
 example/images-webp
 .webp-transform.log
+.webp-transform.cache
 .DS_Store
